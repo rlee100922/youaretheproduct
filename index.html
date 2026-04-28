@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MARKETPLACE OF _™ — Estimate Your Market Value</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <!-- ============ PERSISTENT TASKBAR (revealed after first interaction) ============ -->
+  <header id="taskbar" class="taskbar hidden" aria-hidden="true">
+    <div class="taskbar-inner">
+      <div class="brand">
+        <span class="brand-mark">◼</span>
+        <span class="brand-name">MARKETPLACE&nbsp;OF&nbsp;_<sup>™</sup></span>
+      </div>
+      <nav class="taskbar-nav">
+        <button class="nav-link" data-nav="calculator">Calculator</button>
+        <button class="nav-link" data-nav="marketplace">Marketplace</button>
+        <button class="nav-link" data-nav="cart">
+          Portfolio <span class="cart-count" id="cartCount">0</span>
+        </button>
+      </nav>
+    </div>
+
+    <!-- Global Market Ticker -->
+    <div class="market-ticker" id="marketTicker" aria-label="Live market indices">
+      <div class="ticker-track" id="tickerTrack"></div>
+    </div>
+  </header>
+
+  <main id="app">
+
+    <!-- ============ PHASE 1: CALCULATOR ============ -->
+    <section id="view-calculator" class="view active">
+      <div class="calculator-wrap">
+        <div class="calc-header">
+          <p class="eyebrow">MARKETPLACE OF _™  ·  VALUATION MODULE</p>
+          <h1 class="calc-title">Estimate Your Market Value</h1>
+          <p class="calc-sub">
+            A quick, anonymous assessment based on your behavioral profile.
+            Enter your details and we'll generate a personalized valuation report.
+          </p>
+        </div>
+
+        <form id="valueForm" class="calc-card" autocomplete="off">
+
+          <div class="field">
+            <label for="userName">Name or User ID</label>
+            <input type="text" id="userName" name="userName" placeholder="e.g. Jane D. or @janed" required />
+          </div>
+
+          <div class="field-row">
+            <div class="field">
+              <label for="generation">Generation</label>
+              <select id="generation" name="generation" required>
+                <option value="">Select…</option>
+                <option value="genz">Gen Z</option>
+                <option value="millennial">Millennial</option>
+                <option value="genx">Gen X</option>
+              </select>
+            </div>
+
+            <div class="field">
+              <label for="screenTime">
+                Daily screen time
+                <span class="field-value"><span id="screenTimeOut">4</span> h</span>
+              </label>
+              <input type="range" id="screenTime" name="screenTime" min="0" max="12" step="1" value="4" />
+              <div class="range-ticks">
+                <span>0</span><span>3</span><span>6</span><span>9</span><span>12</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="field-row">
+            <div class="field">
+              <label for="primaryPlatform">Primary platform</label>
+              <select id="primaryPlatform" name="primaryPlatform" required>
+                <option value="">Select…</option>
+                <option value="tiktok">TikTok</option>
+                <option value="instagram">Instagram</option>
+                <option value="youtube">YouTube</option>
+                <option value="other">Other</option>
+              </select>
+            </div>
+
+            <div class="field">
+              <label for="secondaryPlatform">Secondary platform <span class="muted">(optional)</span></label>
+              <select id="secondaryPlatform" name="secondaryPlatform">
+                <option value="">None</option>
+                <option value="tiktok">TikTok</option>
+                <option value="instagram">Instagram</option>
+                <option value="youtube">YouTube</option>
+                <option value="other">Other</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="field">
+            <label>Usage type <span class="muted">(select all that apply)</span></label>
+            <div class="chips" id="usageChips">
+              <label class="chip"><input type="checkbox" value="passive" /> Passive scrolling</label>
+              <label class="chip"><input type="checkbox" value="active" /> Active posting</label>
+              <label class="chip"><input type="checkbox" value="messaging" /> Messaging / networking</label>
+              <label class="chip"><input type="checkbox" value="creator" /> Creator</label>
+              <label class="chip"><input type="checkbox" value="influencer" /> Influencer</label>
+            </div>
+          </div>
+
+          <div class="field-row">
+            <div class="field">
+              <label for="postingFrequency">Posting frequency</label>
+              <select id="postingFrequency" name="postingFrequency" required>
+                <option value="">Select…</option>
+                <option value="low">Low</option>
+                <option value="medium">Medium</option>
+                <option value="high">High</option>
+              </select>
+            </div>
+
+            <div class="field">
+              <label for="engagementLevel">Engagement level</label>
+              <select id="engagementLevel" name="engagementLevel" required>
+                <option value="">Select…</option>
+                <option value="low">Low</option>
+                <option value="medium">Medium</option>
+                <option value="high">High</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="field">
+            <label for="selfClass">Self classification</label>
+            <select id="selfClass" name="selfClass" required>
+              <option value="">Select…</option>
+              <option value="casual">Casual user</option>
+              <option value="active">Active user</option>
+              <option value="creator">Creator</option>
+              <option value="influencer">Influencer</option>
+              <option value="influencer100k">100K+ influencer</option>
+            </select>
+          </div>
+
+          <button type="submit" id="calcBtn" class="cta">
+            <span class="cta-label">Calculate Your Value</span>
+            <span class="cta-arrow">→</span>
+          </button>
+
+          <p id="systemText" class="system-text" aria-live="polite"></p>
+        </form>
+
+        <footer class="calc-footer">
+          <span>© MARKETPLACE OF _™</span>
+          <span>Anonymous assessment · No data stored</span>
+        </footer>
+      </div>
+    </section>
+
+    <!-- ============ PHASE 2: PRODUCT PAGE ============ -->
+    <section id="view-product" class="view">
+      <div class="product-wrap">
+        <div class="product-card" id="productCard">
+
+          <div class="product-left">
+            <div class="product-image" id="productAvatar">
+              <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                <defs>
+                  <linearGradient id="avGrad" x1="0" y1="0" x2="1" y2="1">
+                    <stop offset="0%" stop-color="#e8ecf1" />
+                    <stop offset="100%" stop-color="#c5ccd6" />
+                  </linearGradient>
+                </defs>
+                <rect width="200" height="200" fill="url(#avGrad)" />
+                <circle cx="100" cy="78" r="32" fill="#6b7280" />
+                <path d="M 40 180 C 40 130, 160 130, 160 180 Z" fill="#6b7280" />
+              </svg>
+            </div>
+            <div class="product-gallery">
+              <div class="thumb active"></div>
+              <div class="thumb"></div>
+              <div class="thumb"></div>
+              <div class="thumb"></div>
+            </div>
+          </div>
+
+          <div class="product-right">
+            <div class="breadcrumb">
+              Marketplace › Human Assets › <span id="pGen">—</span>
+            </div>
+
+            <h2 class="product-name" id="pName">—</h2>
+            <div class="product-sku">SKU: <span id="pSku">—</span></div>
+
+            <div class="product-badges" id="pBadges"></div>
+
+            <div class="price-block">
+              <div class="price-main">
+                <span class="price-label">Daily valuation</span>
+                <span class="price-amount" id="pDaily">$0.00</span>
+              </div>
+              <div class="price-sub">
+                <span>Monthly: <strong id="pMonthly">$0</strong></span>
+                <span>Annual: <strong id="pAnnual">$0</strong></span>
+              </div>
+            </div>
+
+            <div class="tier-pill" id="pTier">—</div>
+
+            <div class="product-tags" id="pTags"></div>
+
+            <table class="spec-table">
+              <tbody>
+                <tr><td>Screen time</td><td id="pSpecScreen">—</td></tr>
+                <tr><td>Engagement level</td><td id="pSpecEng">—</td></tr>
+                <tr><td>Platform usage</td><td id="pSpecPlatform">—</td></tr>
+                <tr><td>Posting frequency</td><td id="pSpecPost">—</td></tr>
+              </tbody>
+            </table>
+
+            <div class="product-actions">
+              <button class="btn btn-primary" id="addToCartBtn">Add to Portfolio</button>
+              <button class="btn btn-secondary" id="viewSimilarBtn">View Similar Assets</button>
+            </div>
+
+            <p class="product-assurance">
+              Inventory verified · Eligible for advertiser syndication · Ships instantly
+            </p>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ PHASE 3: MARKETPLACE GRID ============ -->
+    <section id="view-marketplace" class="view">
+      <div class="marketplace-wrap">
+        <div class="marketplace-head">
+          <div>
+            <p class="eyebrow">MARKETPLACE OF _™  ·  LIVE INVENTORY</p>
+            <h2 class="marketplace-title">Available Human Products</h2>
+          </div>
+          <div class="marketplace-meta">
+            <span class="dot-live"></span>
+            <span id="inventoryCount">—</span> profiles indexed
+          </div>
+        </div>
+
+        <div class="marketplace-filters">
+          <button class="filter active" data-filter="all">All</button>
+          <button class="filter" data-filter="premium">Premium</button>
+          <button class="filter" data-filter="high">High Value</button>
+          <button class="filter" data-filter="moderate">Moderate</button>
+          <button class="filter" data-filter="low">Low Yield</button>
+        </div>
+
+        <div class="grid" id="profileGrid"></div>
+      </div>
+    </section>
+
+    <!-- ============ PRODUCT DETAIL VIEW — COLD VALUATION SYSTEM ============ -->
+    <section id="view-detail" class="view">
+      <div class="detail-wrap">
+        <button class="back-link" data-nav="marketplace">← Back to Marketplace</button>
+
+        <div class="detail-card" id="detailCard">
+          <div class="detail-left">
+            <div class="detail-avatar" id="detailAvatar"></div>
+            <div class="detail-meta">
+              <div class="muted mono">HUMAN UNIT</div>
+              <div id="dSku" class="mono">—</div>
+            </div>
+            <div class="detail-barcode"></div>
+            <div class="detail-chart-wrap">
+              <div class="muted tiny mono">Valuation over time · 30d</div>
+              <svg class="detail-chart" id="dBigChart" viewBox="0 0 300 80" preserveAspectRatio="none"></svg>
+            </div>
+          </div>
+
+          <div class="detail-right">
+            <div class="breadcrumb mono">MARKETPLACE › ASSET › <span id="dGen">—</span></div>
+            <h2 id="dName" class="product-name">—</h2>
+
+            <div class="price-block">
+              <div class="price-main">
+                <span class="price-label">Daily valuation</span>
+                <span class="price-amount" id="dDaily">$0.00</span>
+                <span class="price-delta" id="dDelta">—</span>
+              </div>
+              <div class="price-sub">
+                <span>Monthly: <strong id="dMonthly">$0</strong></span>
+                <span>Annual: <strong id="dAnnual">$0</strong></span>
+              </div>
+            </div>
+
+            <div class="tier-pill" id="dTier">—</div>
+            <div class="product-tags" id="dTags"></div>
+
+            <h3 class="section-h">Valuation derivation</h3>
+            <ul class="breakdown breakdown-mono" id="dBreakdown"></ul>
+
+            <h3 class="section-h">Valuation rationale</h3>
+            <p class="behavioral mono-lite" id="dBehavioral">—</p>
+
+            <h3 class="section-h">Asset metrics</h3>
+            <div class="metrics-table">
+              <div class="mrow"><span>Predicted Ad Conversion Rate</span><strong id="dConv">—</strong></div>
+              <div class="mrow"><span>Behavioral Consistency Score</span><strong id="dCons">—</strong></div>
+              <div class="mrow"><span>Audience Influence Range</span><strong id="dInf">—</strong></div>
+              <div class="mrow"><span>Monetization Volatility Index</span><strong id="dVol">—</strong></div>
+              <div class="mrow"><span>Impressions / day</span><strong id="dImp">—</strong></div>
+              <div class="mrow"><span>Retention index</span><strong id="dRet">—</strong></div>
+            </div>
+
+            <div class="product-actions">
+              <button class="btn btn-primary" id="detailAddCart">Add to Portfolio</button>
+              <button class="btn btn-secondary" data-nav="marketplace">Back to Marketplace</button>
+              <button class="btn btn-ghost" data-nav="calculator">Recalculate</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ PORTFOLIO VIEW ============ -->
+    <section id="view-cart" class="view">
+      <div class="cart-wrap">
+        <div class="cart-head">
+          <p class="eyebrow">MARKETPLACE OF _™  ·  ACTIVE HOLDINGS</p>
+          <h2 class="marketplace-title">Your Portfolio</h2>
+          <p class="muted">Managed human assets. Values update in real time.</p>
+        </div>
+
+        <div class="portfolio-summary" id="cartSummary">
+          <div class="psum-main">
+            <div class="psum-label mono">TOTAL PORTFOLIO VALUE</div>
+            <div class="psum-value" id="cartTotalDaily">$0.00<span class="psum-unit">/day</span></div>
+            <div class="psum-delta" id="psumDelta">—</div>
+          </div>
+          <div class="psum-metrics">
+            <div class="pmrow"><span>Holdings</span><strong id="cartItemCount">0</strong></div>
+            <div class="pmrow"><span>Projected annual</span><strong id="cartTotalAnnual">$0</strong></div>
+            <div class="pmrow"><span>Portfolio performance</span><strong id="pfPerf">+0.0%</strong></div>
+            <div class="pmrow"><span>Volatility</span><strong id="pfVol">—</strong></div>
+            <div class="pmrow"><span>Asset distribution</span><strong id="pfDist">—</strong></div>
+          </div>
+        </div>
+
+        <h3 class="section-h section-h-portfolio">Holdings</h3>
+        <div id="cartList" class="cart-list"></div>
+
+        <div class="portfolio-actions">
+          <button class="btn btn-primary" id="checkoutBtn">Execute Acquisition</button>
+          <p class="muted tiny">Transactions simulated. Pricing indicative.</p>
+        </div>
+
+        <div id="cartEmpty" class="cart-empty">
+          <p class="muted">Your portfolio is empty. Acquire assets from the marketplace.</p>
+          <button class="btn btn-secondary" data-nav="marketplace">Browse Marketplace</button>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Absorption overlay — used during the transition from product page into grid -->
+  <div id="absorbOverlay" class="absorb-overlay" aria-hidden="true"></div>
+
+  <script src="main.js"></script>
+</body>
+</html>
