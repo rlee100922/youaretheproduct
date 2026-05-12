@@ -212,6 +212,29 @@ function buildProfiles(n = 70) {
 
 const PROFILES = buildProfiles(70);
 
+// Manually seed Low Yield profiles — the seeded PRNG doesn't produce
+// any daily < $60 entries because minimum screen time is 1h in buildProfiles.
+const LOW_YIELD_SEED = [
+  { id: "MKT-90001", name: "Marcus Webb",    generation: "genx",      primaryPlatform: "other",   secondaryPlatform: "", usage: ["passive"],              postingFrequency: "low", engagementLevel: "low", selfClass: "casual",  screenTime: 0 },
+  { id: "MKT-90002", name: "Claire Novak",   generation: "millennial", primaryPlatform: "other",   secondaryPlatform: "", usage: ["passive"],              postingFrequency: "low", engagementLevel: "low", selfClass: "casual",  screenTime: 1 },
+  { id: "MKT-90003", name: "@user_44231",    generation: "genx",      primaryPlatform: "other",   secondaryPlatform: "", usage: ["passive"],              postingFrequency: "low", engagementLevel: "low", selfClass: "casual",  screenTime: 3 },
+  { id: "MKT-90004", name: "Dana Reyes",     generation: "millennial", primaryPlatform: "other",   secondaryPlatform: "", usage: ["passive"],              postingFrequency: "low", engagementLevel: "low", selfClass: "casual",  screenTime: 2 },
+  { id: "MKT-90005", name: "@user_88103",    generation: "genx",      primaryPlatform: "youtube", secondaryPlatform: "", usage: ["passive"],              postingFrequency: "low", engagementLevel: "low", selfClass: "casual",  screenTime: 1 },
+  { id: "MKT-90006", name: "Vera Lund",      generation: "genz",      primaryPlatform: "other",   secondaryPlatform: "", usage: ["passive"],              postingFrequency: "low", engagementLevel: "low", selfClass: "casual",  screenTime: 0 },
+  { id: "MKT-90007", name: "Tom Haas",       generation: "genx",      primaryPlatform: "other",   secondaryPlatform: "", usage: ["passive","messaging"],  postingFrequency: "low", engagementLevel: "low", selfClass: "casual",  screenTime: 2 },
+  { id: "MKT-90008", name: "@user_71084",    generation: "millennial", primaryPlatform: "youtube", secondaryPlatform: "", usage: ["passive"],              postingFrequency: "low", engagementLevel: "low", selfClass: "casual",  screenTime: 0 },
+  { id: "MKT-90009", name: "Bea Costa",      generation: "genz",      primaryPlatform: "other",   secondaryPlatform: "", usage: ["passive"],              postingFrequency: "low", engagementLevel: "low", selfClass: "casual",  screenTime: 1 },
+  { id: "MKT-90010", name: "@user_29847",    generation: "genx",      primaryPlatform: "youtube", secondaryPlatform: "", usage: ["passive"],              postingFrequency: "low", engagementLevel: "low", selfClass: "casual",  screenTime: 2 },
+];
+LOW_YIELD_SEED.forEach(base => {
+  const priced = computeValue(base);
+  const full = { ...base, ...priced };
+  full.tier = tierFor(full.daily);
+  full.tags = tagsFor(full);
+  full.badges = badgesFor(full);
+  PROFILES.push(full);
+});
+
 
 /* ---------------------------------------------------------------------
    3. STATE
@@ -227,7 +250,7 @@ const state = {
 /* ---------------------------------------------------------------------
    4. VIEW ROUTING
    ------------------------------------------------------------------- */
-const VIEWS = ["calculator","product","marketplace","detail","cart"];
+const VIEWS = ["calculator","product","marketplace","detail","cart","acquisition","report","about"];
 
 function showView(name, opts = {}) {
   VIEWS.forEach(v => {
@@ -290,6 +313,12 @@ const SYSTEM_LINES = [
   "Assigning product classification…",
   "Finalizing valuation report…",
 ];
+
+document.getElementById("skipCalcBtn").addEventListener("click", () => {
+  revealTaskbar();
+  renderMarketplace();
+  showView("marketplace");
+});
 
 form.addEventListener("submit", (e) => {
   e.preventDefault();
@@ -1074,12 +1103,87 @@ function updatePortfolioTotals() {
 }
 
 document.getElementById("checkoutBtn").addEventListener("click", () => {
-  flashSystemMessage("Acquisition simulated. No live transactions in this environment.");
+  if (state.cart.length === 0) return;
+
+  // Generate a transaction reference from timestamp
+  const ref = "ACQ-" + Date.now().toString(36).toUpperCase().slice(-8);
+  document.getElementById("acqRef").textContent = ref;
+
+  // Format timestamp
+  const now = new Date();
+  const pad = n => String(n).padStart(2, "0");
+  const ts = `${now.getUTCFullYear()}-${pad(now.getUTCMonth()+1)}-${pad(now.getUTCDate())} · ${pad(now.getUTCHours())}:${pad(now.getUTCMinutes())} UTC`;
+  document.getElementById("acqTimestamp").textContent = ts;
+
+  showView("acquisition");
+});
+
+document.getElementById("viewReportBtn").addEventListener("click", () => {
+  renderReport();
+  showView("report");
+});
+
+document.getElementById("viewAboutBtn").addEventListener("click", () => {
+  showView("about");
 });
 
 
 /* ---------------------------------------------------------------------
-   11. UTILITIES
+   11. ACQUISITION REPORT
+   ------------------------------------------------------------------- */
+const REPORT_CARDS = [
+  {
+    signal: "BEHAVIORAL SIGNAL 01",
+    title: "Screen Time",
+    points: ["More hours online = more ad impressions", "Longer sessions raise daily asset value", "Extended exposure lowers churn risk"],
+  },
+  {
+    signal: "BEHAVIORAL SIGNAL 02",
+    title: "Posting Frequency",
+    points: ["Each post is a trackable data event", "High cadence amplifies algorithmic reach", "Content output increases resale value"],
+  },
+  {
+    signal: "BEHAVIORAL SIGNAL 03",
+    title: "Engagement",
+    points: ["Likes, shares, and comments build a behavioral profile", "Predictable users attract higher advertiser bids", "Engagement reduces targeting uncertainty"],
+  },
+  {
+    signal: "BEHAVIORAL SIGNAL 04",
+    title: "FOMO",
+    points: ["Fear of missing out discourages disengagement", "Platform notifications are engineered to sustain it", "FOMO-dependent users return more, stay longer"],
+  },
+  {
+    signal: "BEHAVIORAL SIGNAL 05",
+    title: "Social Presence",
+    points: ["Every action generates a data output event", "Presence ≠ identity — it is continuous data production", "Output is packaged and sold to third-party advertisers"],
+  },
+  {
+    signal: "BEHAVIORAL SIGNAL 06",
+    title: "Attention",
+    points: ["Attention is the commodity advertisers purchase", "The platform sells it. The user produces it.", "You receive the service. You are the product."],
+  },
+];
+
+function renderReport() {
+  const container = document.getElementById("reportCards");
+  container.innerHTML = "";
+  REPORT_CARDS.forEach(card => {
+    const el = document.createElement("div");
+    el.className = "report-card";
+    el.innerHTML = `
+      <div class="report-card-num">${escapeHtml(card.signal)}</div>
+      <div class="report-card-title">${escapeHtml(card.title)}</div>
+      <ul class="report-card-points">
+        ${card.points.map(p => `<li>${escapeHtml(p)}</li>`).join("")}
+      </ul>
+    `;
+    container.appendChild(el);
+  });
+}
+
+
+/* ---------------------------------------------------------------------
+   12. UTILITIES
    ------------------------------------------------------------------- */
 function escapeHtml(s) {
   return String(s).replace(/[&<>"']/g, c => ({
@@ -1098,7 +1202,7 @@ function flashSystemMessage(msg) {
 
 
 /* ---------------------------------------------------------------------
-   12. THUMBNAIL GALLERY (decorative product page thumbs)
+   13. THUMBNAIL GALLERY (decorative product page thumbs)
    ------------------------------------------------------------------- */
 document.querySelectorAll(".product-gallery .thumb").forEach(th => {
   th.addEventListener("click", () => {
@@ -1109,7 +1213,7 @@ document.querySelectorAll(".product-gallery .thumb").forEach(th => {
 
 
 /* ---------------------------------------------------------------------
-   13. GLOBAL MARKET TICKER
+   14. GLOBAL MARKET TICKER
    ------------------------------------------------------------------- */
 const TICKER_ITEMS = [
   { key: "AEI", label: "ATTENTION ECONOMY INDEX",  value: 1842.37 },
@@ -1176,7 +1280,7 @@ function initTicker() {
 
 
 /* ---------------------------------------------------------------------
-   14. INITIALIZATION
+   15. INITIALIZATION
    ------------------------------------------------------------------- */
 // Start on calculator (per spec, strictly no landing page)
 showView("calculator");
